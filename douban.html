@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+
+<div id="app_m">
+    <button v-on:click="getData">豆瓣top250</button>
+    <table border="1">
+        <tr>
+        </tr>
+        <tr>
+            <th>电影</th>
+            <td v-for="item in items">{{item.title}}</td>
+        <tr>
+        <th>年份</th>
+
+        <td v-for="item in items">{{item.year}}</td>
+
+        </tr>
+        <tr>
+            <th>评分</th>
+
+            <td v-for="item in items ">{{item.rating.average}}</td>
+        </tr>
+
+    </table>
+</div>
+
+
+
+<!--搜索-->
+<div id="app_s">
+    <p>{{message}}</p>
+    <input id="use" type="text" v-model="message">
+    <button v-on:click="getMovie">搜索电影</button>
+    <ul >
+        <li v-for="value in all_books">{{value}}</li>
+    </ul>
+</div>
+
+
+<script src="vue.js"></script>
+<script src="jquery-3.2.0.js"></script>
+<script>
+
+    var web_douban = new Vue({
+        el : '#app_m',
+        data :{
+            items : '',
+        },
+
+        methods :{
+            getData : function () {
+                $.ajax({
+                    type : 'Get',
+                    dataType : 'jsonp',
+                    url : 'https://api.douban.com/v2/movie/top250',
+                    success : function (data) {
+                        console.log(data);
+                        web_douban.items= data.subjects;
+                    }
+                })
+
+
+            }
+        }
+    })
+
+
+
+
+//    搜索
+    var app_s = new Vue({
+        el : '#app_s',
+        data : {
+            message : '输入你想要的电影名',
+            all_books : ''
+        },
+        methods : {
+          getMovie : function () {
+              var db_api = 'https://api.douban.com/v2/book/search'
+              var use = $('#use').val();
+              console.log(use)
+              $.ajax({
+                  type: 'Get',
+                  dataType : 'jsonp',
+                  url : db_api ,
+                  data : {
+                      q : use
+                  },
+                  success : function (data) {
+//                      console.log(data);
+                      app_s.all_books = data.books[0];
+                      console.log(app_s.all_books)
+                  }
+              })
+          }
+        }
+    })
+</script>
+</body>
+</html>
